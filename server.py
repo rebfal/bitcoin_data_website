@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 
+#TEST SIRRI
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bitcoindata.file"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = 0
