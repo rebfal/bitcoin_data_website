@@ -1,0 +1,38 @@
+<link rel="stylesheet" type="text/css" href="../static/stylesheet.css"> {% extends "index.html" %} {% block content %}
+
+<h2>Table</h2>
+<form action="{{ url_for('show_tables')}}" method="post">
+    <label for="date">Date:</label>
+    <input type="text" id="date" name="date" placeholder="YYYY-MM-DD">
+    <button type="submit">Apply filter</button>
+
+    <div class="table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Price</th>
+                    <th>Open</th>
+                    <th>High</th>
+                    <th>Low</th>
+                    <th>Vol. </th>
+                    <th>Change %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bitcoin in bitcoins %}
+                <tr>
+                    <td>{{ bitcoin.date }}</td>
+                    <td>{{ bitcoin.price }}</td>
+                    <td>{{ bitcoin.open }}</td>
+                    <td>{{ bitcoin.high }}</td>
+                    <td>{{ bitcoin.low }}</td>
+                    <td>{{ bitcoin.vol }}</td>
+                    <td>{{ bitcoin.change }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% endblock %}

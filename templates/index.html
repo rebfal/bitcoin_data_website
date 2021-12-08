@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Bitcoinz</title>
+    <link rel="stylesheet" href="../static/stylesheet.css">
+    <!-- <script src="server.py" defer></script>  -->
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <img src="../static/img/bitcoin.png" />
+            <h2>Bitcoin project</h2>
+            <h3>By Siri Nordlander & Rebecca Fällström</h3>
+        </header>
+        <div class="buttonContainer">
+            <button id="homeButton">HOME</button>
+            <button id="graphButton">GRAPH</button>
+            <button id="tableButton">TABLE</button>
+            <button id="priceButton">SHOW CLOSING PRICES</button>
+
+
+        </div>
+
+        <div class="bitcoinContent">
+            {% block content %} {% endblock %}
+            <b></b>
+            <div id="temp">
+                <h1>Midterm presentation on historical Bitcoin data</h1>
+                <p>Welcome to the demo of the website created to complete the midterm in the course Advanced Algorithms and Programming. The website is created by Siri Nordlander and Rebecca Fällström.
+                    <br> <b>How to navigate:</b>
+                    <br> <b>HOME -></b> this page, the homepage
+                    <br> <b>TABLE -></b> instert a date to see the specific data from that day
+                    <br> <b>SHOW CLOSING PRICES -></b> pick two dates and get the closing prices inbetween those dates. Pick a number of elements you want to see if you want the list to be shoreter and only see the n:th first elements
+                    <br> <b>GRAPH -></b> to see a graph of all closing prices during the interval
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>
+
+{% block javascript %}
+<script>
+    document.getElementById('homeButton').addEventListener('click', function() {
+        window.location.href = '/';
+        // document.getElementById('tableButton').innerHTML = "Hello World";
+    })
+
+
+    document.getElementById('graphButton').addEventListener('click', function() {
+        window.location.href = '/graph';
+        // document.getElementById('tableButton').innerHTML = "Hello World";
+    })
+
+    document.getElementById('tableButton').addEventListener('click', function() {
+        window.location.href = '/tables';
+        // document.getElementById('tableButton').innerHTML = "Hello World";
+    })
+
+    document.getElementById('priceButton').addEventListener('click', function() {
+        window.location.href = '/closing_prices';
+        // document.getElementById('tableButton').innerHTML = "Hello World";
+    })
+
+    var element = document.getElementById("temp");
+    if (window.location.pathname == "/") {
+        console.log('/')
+        if (element.classList.contains("hide")) {
+            element.classList.remove("hide");
+        }
+        element.classList.add("show");
+    } else {
+        if (element.classList.contains("show")) {
+            element.classList.remove("show");
+        }
+        element.classList.add("hide");
+    }
+</script>
+{% endblock%}

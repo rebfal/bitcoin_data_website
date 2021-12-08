@@ -1,0 +1,168 @@
+h1,
+h2 {
+    color: rgb(248, 156, 45);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 20rem auto;
+    grid-template-rows: 20rem auto;
+}
+
+header {
+    grid-row: 1;
+    grid-column: 1;
+    place-self: center stretch;
+    width: 80%;
+    margin-top: 1rem;
+}
+
+header h2 {
+    text-align: center;
+    margin-left: 1rem;
+    margin-top: 0rem;
+}
+
+header h3 {
+    text-align: center;
+    margin-left: 1rem;
+    color: rgb(219, 219, 219);
+    font-size: 100%;
+    margin-top: 0rem;
+}
+
+header img {
+    width: 250px;
+    z-index: 10;
+    margin-top: 1rem;
+    margin-left: 1rem;
+}
+
+.buttonContainer {
+    grid-row: 2;
+    grid-column: 1;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 4rem 4rem 4rem 4rem;
+}
+
+button,
+input[type="submit"],
+input[type="reset"] {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    background-color: rgb(219, 219, 219);
+    padding: 0.5rem;
+    margin: 1rem;
+    border-radius: 3px;
+    box-shadow: 10px 5px 5px rgb(241, 241, 241);
+}
+
+label,
+input {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+button {
+    font-family: 'Courier New', Courier, monospace;
+    place-self: center stretch;
+}
+
+button:hover {
+    box-shadow: 10px 5px 5px rgb(124, 124, 124);
+    background-color: rgb(248, 156, 45);
+}
+
+.buttonContainer {
+    margin-top: 3rem;
+}
+
+#homeButton {
+    grid-row: 1;
+}
+
+#tableButton {
+    grid-row: 2;
+}
+
+#priceButton {
+    grid-row: 3;
+}
+
+#graphButton {
+    grid-row: 4;
+}
+
+#temp {
+    color: rgba(0, 0, 0, 0.568);
+}
+
+p {
+    line-height: 2;
+}
+
+.show {
+    visibility: visible;
+    margin: 2rem;
+}
+
+.hide {
+    visibility: hidden;
+    z-index: -1;
+    size: 0rem;
+    margin: 0;
+    padding: 0;
+}
+
+.bitcoinContent {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    margin-top: 4rem;
+}
+
+table {
+    width: 800px;
+    border-collapse: collapse;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+th,
+td {
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: rgb(61, 56, 56);
+}
+
+th {
+    text-align: left;
+}
+
+th {
+    background-color: rgb(248, 156, 45);
+}
+
+tr :hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+td {
+    position: relative;
+}
+
+td :hover ::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -9999px;
+    bottom: -9999px;
+    background-color: rgba(255, 255, 255, 0.2);
+    z-index: -1;
+}
