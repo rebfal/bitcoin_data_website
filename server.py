@@ -64,7 +64,7 @@ def create_db():
 
 @app.route('/')
 def home():
-    #return ('<h2>test</h2>')
+    #return ('<h2>test</h2>') test
     
     prices = [bitcoin.price for bitcoin in Bitcoin.query.all()]
     dates = [bitcoin.date for bitcoin in Bitcoin.query.all()]
