@@ -1,120 +1,21 @@
-from enum import unique
-from os import error
+from flask import request, render_template, Response
 import io
-from sqlite3 import Connection as SQLite3Connection
-from datetime import date, datetime
-from sqlite3.dbapi2 import connect
-from typing import get_args
-from sqlalchemy import event
-from sqlalchemy import engine
-from sqlalchemy.orm import query
-from sqlalchemy.types import Integer, DateTime
-from sqlalchemy.engine import Engine
-from flask import Flask, request, jsonify, render_template, Response
-from flask_sqlalchemy import SQLAlchemy
-import random
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bitcoindata.file"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = 0
-
-# configure sqlite3 to enforce foreign key contraints
-@event.listens_for(Engine, "connect")
-def _set_sqlite_pragma(dbapi_connection, connection_record):
-    if isinstance(dbapi_connection, SQLite3Connection):
-        cursor = dbapi_connection.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON;")
-        cursor.close()
-
-
-
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bitcoindata.file"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = 0
-
-db = SQLAlchemy(app)
-now = datetime.now()
-
-class Bitcoin(db.Model):
-        __tablename__ = "data_bitcoin"
-        date = db.Column(db.Date, primary_key=True, unique=True)
-        price = db.Column(db.String(200))
-        open = db.Column(db.String(200))
-        high = db.Column(db.String(200))
-        low = db.Column(db.String(200))
-        vol = db.Column(db.String(200))
-        change = db.Column(db.String(200))
-
-class EUR_USD(db.Model):
-        __tablename__ = "data_EUR_USD"
-        date = db.Column(db.Date, primary_key=True, unique=True)
-        price = db.Column(db.String(200))
-        open = db.Column(db.String(200))
-        high = db.Column(db.String(200))
-        low = db.Column(db.String(200))
-        change = db.Column(db.String(200))
-        #test
-
-def create_db():
-    create_bitcoin()
-    create_EUR_USD()
-    #create_gold_futures()
-    #create_Nasdaq_100()
-    #create_S&P_500_futures()
-    #create_S&P_500_VIX()
-    #create_TSLA()
-
-
-
-def create_bitcoin():
-    df = pd.read_csv('Data/BTC_USD Bitfinex Historical Data.csv')
-    df['Date']= pd.to_datetime(df['Date'])
-    
-    for index, row in df.iterrows():
-        new_bitcoin = Bitcoin(
-            date = row['Date'],
-            price = row['Price'].replace(',', '').replace('.',','),
-            open = row['Open'].replace(',', '').replace('.',','),
-            high = row['High'].replace(',', '').replace('.',','),
-            low = row['Low'].replace(',', '').replace('.',','),
-            vol = row['Vol.'].replace('.', '').replace('K','000'),
-            change = row['Change %'].replace('%', '')
-        )
-
-        db.session.add(new_bitcoin)
-    db.session.commit()
-
-def create_EUR_USD():
-    df = pd.read_csv('Data/BTC_USD Bitfinex Historical Data.csv')
-    df['Date']= pd.to_datetime(df['Date'])
-    
-    for index, row in df.iterrows():
-        new_bitcoin = EUR_USD(
-            date = row['Date'],
-            price = row['Price'].replace(',', '').replace('.',','),
-            open = row['Open'].replace(',', '').replace('.',','),
-            high = row['High'].replace(',', '').replace('.',','),
-            low = row['Low'].replace(',', '').replace('.',','),
-            change = row['Change %'].replace('%', '')
-        )
-
-        db.session.add(new_bitcoin)
-    db.session.commit()
+from app import app
+from app.models import Bitcoin
 
 
 @app.route('/')
 def home():
+    
     prices = [bitcoin.price for bitcoin in Bitcoin.query.all()]
     dates = [bitcoin.date for bitcoin in Bitcoin.query.all()]
     return render_template('index.html', legend='prices', prices = prices, dates = dates)
-
 
 @app.route('/tables', methods = ['GET','POST'])
 def show_tables():
@@ -168,7 +69,6 @@ def show_closing_prices():
         return hed + error_text
 
 @app.route('/tree_sort', methods = ['GET','POST'])
-
 def tree_sort():
     try:
         if request.method == "POST":
@@ -296,13 +196,3 @@ def create_figure():
     print(price_y[10:30])
     axis.plot(xpoints, price_y)
     return fig
-
-
-
-if __name__ == "__main__":
-    #db.drop_all()
-    db.create_all()
-    #create_db()
-    app.run(host='localhost', port=5000)
-    app.run(debug=True)
-
