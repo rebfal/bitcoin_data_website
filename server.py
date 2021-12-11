@@ -300,9 +300,9 @@ def create_figure():
 
 
 if __name__ == "__main__":
-    db.drop_all()
+    #db.drop_all()
     db.create_all()
-    create_db()
+    #create_db()
     app.run(host='localhost', port=5000)
     app.run(debug=True)
 
