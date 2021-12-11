@@ -60,6 +60,7 @@ class EUR_USD(db.Model):
         high = db.Column(db.String(200))
         low = db.Column(db.String(200))
         change = db.Column(db.String(200))
+        #test
 
 def create_db():
     create_bitcoin()
