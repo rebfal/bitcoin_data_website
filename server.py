@@ -1,3 +1,4 @@
+from enum import unique
 from os import error
 import io
 from sqlite3 import Connection as SQLite3Connection
@@ -19,9 +20,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-from load_data import create_db,  Bitcoin, db
 
-#TEST SIRRI
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bitcoindata.file"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = 0
@@ -33,6 +32,80 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA foreign_keys=ON;")
         cursor.close()
+
+
+
+app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bitcoindata.file"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = 0
+
+db = SQLAlchemy(app)
+now = datetime.now()
+
+class Bitcoin(db.Model):
+        __tablename__ = "data_bitcoin"
+        date = db.Column(db.Date, primary_key=True, unique=True)
+        price = db.Column(db.String(200))
+        open = db.Column(db.String(200))
+        high = db.Column(db.String(200))
+        low = db.Column(db.String(200))
+        vol = db.Column(db.String(200))
+        change = db.Column(db.String(200))
+
+class EUR_USD(db.Model):
+        __tablename__ = "data_EUR_USD"
+        date = db.Column(db.Date, primary_key=True, unique=True)
+        price = db.Column(db.String(200))
+        open = db.Column(db.String(200))
+        high = db.Column(db.String(200))
+        low = db.Column(db.String(200))
+        change = db.Column(db.String(200))
+
+def create_db():
+    create_bitcoin()
+    create_EUR_USD()
+    #create_gold_futures()
+    #create_Nasdaq_100()
+    #create_S&P_500_futures()
+    #create_S&P_500_VIX()
+    #create_TSLA()
+
+
+
+def create_bitcoin():
+    df = pd.read_csv('Data/BTC_USD Bitfinex Historical Data.csv')
+    df['Date']= pd.to_datetime(df['Date'])
+    
+    for index, row in df.iterrows():
+        new_bitcoin = Bitcoin(
+            date = row['Date'],
+            price = row['Price'].replace(',', '').replace('.',','),
+            open = row['Open'].replace(',', '').replace('.',','),
+            high = row['High'].replace(',', '').replace('.',','),
+            low = row['Low'].replace(',', '').replace('.',','),
+            vol = row['Vol.'].replace('.', '').replace('K','000'),
+            change = row['Change %'].replace('%', '')
+        )
+
+        db.session.add(new_bitcoin)
+    db.session.commit()
+
+def create_EUR_USD():
+    df = pd.read_csv('Data/BTC_USD Bitfinex Historical Data.csv')
+    df['Date']= pd.to_datetime(df['Date'])
+    
+    for index, row in df.iterrows():
+        new_bitcoin = EUR_USD(
+            date = row['Date'],
+            price = row['Price'].replace(',', '').replace('.',','),
+            open = row['Open'].replace(',', '').replace('.',','),
+            high = row['High'].replace(',', '').replace('.',','),
+            low = row['Low'].replace(',', '').replace('.',','),
+            change = row['Change %'].replace('%', '')
+        )
+
+        db.session.add(new_bitcoin)
+    db.session.commit()
 
 
 @app.route('/')
@@ -226,9 +299,9 @@ def create_figure():
 
 
 if __name__ == "__main__":
-   # db.drop_all()
+    db.drop_all()
     db.create_all()
-    #create_db()
+    create_db()
     app.run(host='localhost', port=5000)
     app.run(debug=True)
 
