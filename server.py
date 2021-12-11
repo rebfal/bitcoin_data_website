@@ -19,7 +19,6 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-from load_data import create_db,  Bitcoin, db
 
 #TEST SIRRI
 app = Flask(__name__)
