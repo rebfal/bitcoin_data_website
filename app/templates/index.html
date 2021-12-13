@@ -13,6 +13,7 @@
             <img src="../static/img/bitcoin.png" />
             <h2>Bitcoin project</h2>
             <h3>By Siri Nordlander & Rebecca Fällström</h3>
+
         </header>
         <div class="buttonContainer">
             <button id="homeButton">HOME</button>
@@ -22,6 +23,8 @@
 
 
         </div>
+
+
 
         <div class="bitcoinContent">
             {% block content %} {% endblock %}
@@ -35,7 +38,65 @@
                     <br> <b>SHOW CLOSING PRICES -></b> pick two dates and get the closing prices inbetween those dates. Pick a number of elements you want to see if you want the list to be shoreter and only see the n:th first elements
                     <br> <b>GRAPH -></b> to see a graph of all closing prices during the interval
                 </p>
+
+
+
+
+
+                <!-- <div id="financial_variable" class="dropdown-check-list" tabindex="100">
+                    <span class="anchor">Select financial market</span>
+                    <ul class="items">
+                        <li><input type="radio" id="bitcoin" name="market" value="bitcoin">
+                            <label for="bitcoin">Bitcoin</label></li>
+
+                        <li><input type="radio" id="eurusd" name="market" value="eurusd">
+                            <label for="eurusd">EUR/USD</label></li>
+
+                        <li><input type="radio" id="gold" name="market" value="gold">
+                            <label for="gold">Gold Futures</label></li>
+
+                        <li><input type="radio" id="nasdaq" name="market" value="nasdaq">
+                            <label for="nasdaq">Nasdaq 100 Futures</label></li>
+
+                        <li><input type="radio" id="sp500futures" name="market" value="sp500futures">
+                            <label for="sp500futures">S&P 500 Futures</label></li>
+
+                        <li><input type="radio" id="sp500vix" name="market" value="sp500vix">
+                            <label for="sp500vix">S&P 500 VIX Futures</label></li>
+
+                        <li><input type="radio" id="tesla" name="market" value="tesla">
+                            <label for="tesla">Tesla</label></li>
+
+                    </ul>
+                </div> -->
             </div>
+
+            <form action="{{ url_for('home')}}" method="POST" id="financial_variable" class="dropdown-check-list" tabindex="100" onsubmit="">
+                <span class="anchor">Select financial market</span>
+                <ul class="items">
+                    <li><input type="radio" id="bitcoin" name="market" value="bitcoin">
+                        <label for="bitcoin">Bitcoin</label></li>
+
+                    <li><input type="radio" id="eurusd" name="market" value="eurusd">
+                        <label for="eurusd">EUR/USD</label></li>
+
+                    <li><input type="radio" id="gold" name="market" value="gold">
+                        <label for="gold">Gold Futures</label></li>
+
+                    <li><input type="radio" id="nasdaq" name="market" value="nasdaq">
+                        <label for="nasdaq">Nasdaq 100 Futures</label></li>
+
+                    <li><input type="radio" id="sp500futures" name="market" value="sp500futures">
+                        <label for="sp500futures">S&P 500 Futures</label></li>
+
+                    <li><input type="radio" id="sp500vix" name="market" value="sp500vix">
+                        <label for="sp500vix">S&P 500 VIX Futures</label></li>
+
+                    <li><input type="radio" id="tesla" name="market" value="tesla">
+                        <label for="tesla">Tesla</label></li>
+
+                </ul>
+
 
         </div>
     </div>
@@ -66,6 +127,45 @@
         window.location.href = '/closing_prices';
         // document.getElementById('tableButton').innerHTML = "Hello World";
     })
+
+    var checkList = document.getElementById('financial_variable');
+    checkList.getElementsByClassName('anchor')[0].onclick = function(evt) {
+        if (checkList.classList.contains('visible'))
+            checkList.classList.remove('visible');
+        else
+            checkList.classList.add('visible');
+        displayRadioValue()
+    }
+
+
+    var markets = document.querySelectorAll('input[name="market"]').onclick = function() {
+        var ele = document.getElementsByName('market');
+        console.log('element')
+        for (i = 0; i < ele.length; i++) {
+            if (ele[i].checked)
+                sessionStorage.setItem('market', ele[i].value)
+            console.log(ele[i].value)
+                // document.getElementById("result").innerHTML= "Gender: "+ele[i].value;
+        }
+    }
+
+    // var marketSelection = document.getElementsByClassName('items').onclick = function() {
+    //     var ele = document.getElementsByName('market');
+    //     console.log(ele)
+    //     for (i = 0; i < ele.length; i++) {
+    //         if (ele[i].checked)
+    //             sessionStorage.setItem('market', ele[i].value)
+    //         console.log(ele[i].value)
+    //             // document.getElementById("result").innerHTML= "Gender: "+ele[i].value;
+    //     }
+    // }
+
+    function displayRadioValue() {
+
+        console.log('ele')
+
+    }
+
 
     var element = document.getElementById("temp");
     if (window.location.pathname == "/") {

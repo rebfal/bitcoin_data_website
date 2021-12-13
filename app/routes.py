@@ -10,12 +10,33 @@ from app import app
 from app.models import Bitcoin
 
 
-@app.route('/')
+@app.route('/', methods = ['GET','POST'])
 def home():
-    
     prices = [bitcoin.price for bitcoin in Bitcoin.query.all()]
     dates = [bitcoin.date for bitcoin in Bitcoin.query.all()]
+
+    # market = request.form['market']
+    market = request.form.get('market')
+    print('print'+str(market))
+    
+    # if request.method == 'POST':
+    #    market = request.form['market']
+    #    print(market)
+       
+    # else:
+    #    print('hittade ej')
+
     return render_template('index.html', legend='prices', prices = prices, dates = dates)
+
+#def select_market():
+    #if request.method == 'POST':
+     #   market = request.form['options']
+      #  print(market)
+    #else:
+     #   print('hittade ej')
+   # return render_template('index.html')
+    
+
 
 @app.route('/tables', methods = ['GET','POST'])
 def show_tables():
