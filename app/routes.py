@@ -7,26 +7,52 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 from app import app
-from app.models import Bitcoin
+from app.models import Bitcoin, EUR_USD, Gold, Nasdaq, SP_Futures, SP_VIX_Futures, TSLA
 
+global market_dict
+global choosenmarket
 
-@app.route('/')
+market_dict = {'bitcoin': Bitcoin,
+               'eur_usd': EUR_USD,
+               'gold': Gold, 
+               'nasdaq': Nasdaq,
+               'sp_500_futures': SP_Futures, 
+               'sp_vix_futures': SP_VIX_Futures,
+               'tesla': TSLA }
+
+@app.route('/', methods= ['GET','POST'])
 def home():
-    
-    prices = [bitcoin.price for bitcoin in Bitcoin.query.all()]
-    dates = [bitcoin.date for bitcoin in Bitcoin.query.all()]
-    return render_template('index.html', legend='prices', prices = prices, dates = dates)
+    if request.method  == 'POST':
+        global choosenmarket
+        if request.form['choose_market'] == 'bitcoin':
+            choosenmarket = market_dict['bitcoin']
+        if request.form['choose_market'] == 'eur_usd':
+            choosenmarket = market_dict['eur_usd']    
+        if request.form['choose_market'] == 'gold':
+            choosenmarket = market_dict['gold']
+        if request.form['choose_market'] == 'nasdaq':
+            choosenmarket = market_dict['nasdaq']
+        if request.form['choose_market'] == 'sp_500_futures':
+            choosenmarket = market_dict['sp_500_futures']
+        if request.form['choose_market'] == 'sp_vix_futures':
+            choosenmarket = market_dict['sp_vix_futures']
+        if request.form['choose_market'] == 'tesla':
+            choosenmarket = market_dict['tesla']
+
+    return render_template('index.html')
 
 @app.route('/tables', methods = ['GET','POST'])
 def show_tables():
     try:
         if request.method == "POST":
             # getting input with name = fname in HTML form
+            #global choosenmarket
+            
             searchdate = request.form.get("date")
-            bitcoins = Bitcoin.query.filter_by(date = searchdate).order_by(Bitcoin.date).all()
+            bitcoins = choosenmarket.query.filter_by(date = searchdate).order_by(choosenmarket.date).all()
             
         else:
-            bitcoins = Bitcoin.query.order_by(Bitcoin.date).all()
+            bitcoins = choosenmarket.query.order_by(choosenmarket.date).all()
             #bitcoins = bitcoins[0:10]
 
         return(render_template('tables.html', bitcoins = bitcoins))
@@ -46,11 +72,11 @@ def show_closing_prices():
             searchdate2 = request.form.get("date2")
             number = int(request.form.get("number"))
 
-            bitcoins = Bitcoin.query.filter(Bitcoin.date <= searchdate2).\
-                filter(Bitcoin.date >= searchdate1).order_by(Bitcoin.date).all()
+            bitcoins = choosenmarket.query.filter(choosenmarket.date <= searchdate2).\
+                filter(choosenmarket.date >= searchdate1).order_by(choosenmarket.date).all()
             
-            number_of_bitcoins = Bitcoin.query.filter(Bitcoin.date <= searchdate2).\
-                filter(Bitcoin.date >= searchdate1).order_by(Bitcoin.date).count()
+            number_of_bitcoins = choosenmarket.query.filter(choosenmarket.date <= searchdate2).\
+                filter(choosenmarket.date >= searchdate1).order_by(choosenmarket.date).count()
 
             if number_of_bitcoins > number:
                 while number_of_bitcoins > number:
@@ -58,7 +84,7 @@ def show_closing_prices():
                     number_of_bitcoins -= 1
             
         else:
-            bitcoins = Bitcoin.query.order_by(Bitcoin.date).all()
+            bitcoins = choosenmarket.query.order_by(choosenmarket.date).all()
         
         
         return(render_template('closing_prices.html', bitcoins = bitcoins))
@@ -183,8 +209,8 @@ def create_figure():
     fig = Figure()
     axis = fig.add_subplot(1, 1, 1)
     
-    dates = [bitcoin.date for bitcoin in Bitcoin.query.order_by(Bitcoin.date).all()] 
-    prices = [bitcoin.price for bitcoin in Bitcoin.query.order_by(Bitcoin.date).all()]
+    dates = [bitcoin.date for bitcoin in choosenmarket.query.order_by(choosenmarket.date).all()] 
+    prices = [bitcoin.price for bitcoin in choosenmarket.query.order_by(choosenmarket.date).all()]
 
     price_y =[]
     ypoints = np.array(prices)
