@@ -24,19 +24,19 @@ market_dict = {'bitcoin': Bitcoin,
 def home():
     if request.method  == 'POST':
         global choosenmarket
-        if request.form['choose_market'] == 'bitcoin':
+        if request.form['choose_market'] == 'Bitcoin':
             choosenmarket = market_dict['bitcoin']
-        if request.form['choose_market'] == 'eur_usd':
+        if request.form['choose_market'] == 'EUR/USD':
             choosenmarket = market_dict['eur_usd']    
-        if request.form['choose_market'] == 'gold':
+        if request.form['choose_market'] == 'Gold Futures':
             choosenmarket = market_dict['gold']
-        if request.form['choose_market'] == 'nasdaq':
+        if request.form['choose_market'] == 'Nasdaq 100 Futures':
             choosenmarket = market_dict['nasdaq']
-        if request.form['choose_market'] == 'sp_500_futures':
+        if request.form['choose_market'] == 'S&P 500 Futures':
             choosenmarket = market_dict['sp_500_futures']
         if request.form['choose_market'] == 'sp_vix_futures':
-            choosenmarket = market_dict['sp_vix_futures']
-        if request.form['choose_market'] == 'tesla':
+            choosenmarket = market_dict['S&P 500 VIX Futures']
+        if request.form['choose_market'] == 'Tesla':
             choosenmarket = market_dict['tesla']
 
     return render_template('index.html')
