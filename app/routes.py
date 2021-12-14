@@ -1,4 +1,4 @@
-from flask import request, render_template, Response
+from flask import request, render_template, Response, sessions
 import io
 import pandas as pd
 import numpy as np
@@ -7,18 +7,36 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 from app import app
-from app.models import Bitcoin
+from app.models import Bitcoin, EUR_USD, Gold, Nasdaq, SP_Futures, SP_VIX_Futures, TSLA
+# from ..algoritms.BTStree import BSTNode, BSTree
+
+# global class_dict 
+# class_dict = {'bitcoin': Bitcoin, 'eurusd': EUR_USD, 'gold': Gold, 'nasdaq': Nasdaq, 'sp500': SP_Futures, 'sp500vix': SP_VIX_Futures, 'tesla': TSLA}
 
 
-@app.route('/')
+@app.route('/', methods = ['GET','POST'])
 def home():
-    
-    prices = [bitcoin.price for bitcoin in Bitcoin.query.all()]
-    dates = [bitcoin.date for bitcoin in Bitcoin.query.all()]
-    return render_template('index.html', legend='prices', prices = prices, dates = dates)
 
-@app.route('/tables', methods = ['GET','POST'])
-def show_tables():
+    if request.method == 'POST':
+        market = 
+
+    
+
+    return render_template('index.html')
+
+@app.route('/table/<market>', methods = ['GET','POST'])
+
+def show_tables(market):
+    # class_dict = {'bitcoin': 'Bitcoin', 'eurusd': 'EUR_USD', 'gold': 'Gold', 'nasdaq': 'Nasdaq', 'sp500': 'SP_Futures', 'sp500vix': 'SP_VIX_Futures', 'tesla': 'TSLA'}
+    # market_class = class_dict[market]
+    if market == 'bitcoin':
+        market_class = Bitcoin
+
+    if market == 'gold':
+        market_class = Gold
+
+    
+    
     try:
         if request.method == "POST":
             # getting input with name = fname in HTML form
@@ -36,8 +54,11 @@ def show_tables():
         hed = '<h1> Something went wrong. </h1>'
         return hed + error_text
 
+
+
+
     
-@app.route('/closing_prices', methods = ['GET','POST'])
+@app.route('/closing_prices/bitcoin', methods = ['GET','POST'])
 def show_closing_prices():
     try:
         if request.method == "POST":
@@ -68,7 +89,7 @@ def show_closing_prices():
         hed = '<h1> Something went wrong. </h1>'
         return hed + error_text
 
-@app.route('/tree_sort', methods = ['GET','POST'])
+@app.route('/tree_sort/bitcoin', methods = ['GET','POST'])
 def tree_sort():
     try:
         if request.method == "POST":
@@ -117,57 +138,13 @@ def tree_sort():
         hed = '<h1> Something went wrong. </h1>'
         return hed + error_text
 
-class BSTNode:
-    def __init__(self, key, key_dict):
-        self.key = key
-        self.left = None
-        self.right = None
-        self.parent = None
-        self.date = key_dict
- 
-    def insert(self, node):
-        if self.key > node.key:
-            if self.left is None:
-                self.left = node
-                node.parent = self
-            else:
-                self.left.insert(node)
-        elif self.key <= node.key:
-            if self.right is None:
-                self.right = node
-                node.parent = self
-            else:
-                self.right.insert(node)
- 
-    def inorder(self):
-        if self.left is not None:
-            self.left.inorder()
-        print(self.key, self.date, end=' ')
-        if self.right is not None:
-            self.right.inorder()
- 
-class BSTree:
-    def __init__(self):
-        self.root = None
- 
-    def inorder(self):
-        if self.root is not None:
-            self.root.inorder()
- 
-    def add(self, key, key_dict):
-        new_node = BSTNode(key, key_dict)
-        if self.root is None:
-            self.root = new_node
-        else:
-            self.root.insert(new_node)
 
-
-@app.route('/graph')
+@app.route('/graph/bitcoin')
 def showGraph():
     return(render_template('graph.html'))
 
 
-@app.route('/plot.png')
+@app.route('/plot.png/bitcoin')
 def plot_png():
     fig = create_figure()
     output = io.BytesIO()

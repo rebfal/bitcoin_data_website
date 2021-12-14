@@ -35,6 +35,16 @@
                     <br> <b>SHOW CLOSING PRICES -></b> pick two dates and get the closing prices inbetween those dates. Pick a number of elements you want to see if you want the list to be shoreter and only see the n:th first elements
                     <br> <b>GRAPH -></b> to see a graph of all closing prices during the interval
                 </p>
+
+                <div>
+                    <button id="button_bitcoin">Bitcoin</button>
+                    <button id="button_eurusd">EUR/USD</button>
+                    <button id="button_gold">Gold</button>
+                    <button id="button_nasdaq">Nasdaq</button>
+                    <button id="button_sp500">S&P 500 Futures</button>
+                    <button id="button_sp500vix">S&P 500 VIX Futures</button>
+                    <button id="button_tesla">Tesla</button>
+                </div>
             </div>
 
         </div>
@@ -46,6 +56,50 @@
 
 {% block javascript %}
 <script>
+    // Set routes for specific market
+    document.getElementById('button_bitcoin').addEventListener('click', function() {
+        sessionStorage.setItem('table', '/table/bitcoin')
+        sessionStorage.setItem('graph', '/graph/bitcoin')
+        sessionStorage.setItem('closing', '/closing_prices/bitcoin')
+    })
+
+    document.getElementById('button_eurusd').addEventListener('click', function() {
+        sessionStorage.setItem('table', '/tables/eurusd')
+        sessionStorage.setItem('graph', '/graph/eurusd')
+        sessionStorage.setItem('closing', '/closing_prices/eurusd')
+    })
+
+    document.getElementById('button_gold').addEventListener('click', function() {
+        sessionStorage.setItem('table', '/tables/gold')
+        sessionStorage.setItem('graph', '/graph/gold')
+        sessionStorage.setItem('closing', '/closing_prices/gold')
+    })
+
+    document.getElementById('button_nasdaq').addEventListener('click', function() {
+        sessionStorage.setItem('table', '/tables/nasdaq')
+        sessionStorage.setItem('graph', '/graph/nasdaq')
+        sessionStorage.setItem('closing', '/closing_prices/nasdaq')
+    })
+
+    document.getElementById('button_sp500').addEventListener('click', function() {
+        sessionStorage.setItem('table', '/tables/sp500')
+        sessionStorage.setItem('graph', '/graph/sp500')
+        sessionStorage.setItem('closing', 'closing_prices/sp500')
+    })
+
+    document.getElementById('button_sp500vix').addEventListener('click', function() {
+        sessionStorage.setItem('table', '/tables/sp500vix')
+        sessionStorage.setItem('graph', '/graph/sp500vix')
+        sessionStorage.setItem('closing', '/closing_prices/sp500vix')
+    })
+
+    document.getElementById('button_tesla').addEventListener('click', function() {
+        sessionStorage.setItem('table', '/tables/tesla')
+        sessionStorage.setItem('graph', '/graph/tesla')
+        sessionStorage.setItem('closing', '/closing_prices/tesla')
+    })
+
+
     document.getElementById('homeButton').addEventListener('click', function() {
         window.location.href = '/';
         // document.getElementById('tableButton').innerHTML = "Hello World";
@@ -53,17 +107,20 @@
 
 
     document.getElementById('graphButton').addEventListener('click', function() {
-        window.location.href = '/graph';
+        graph_route = sessionStorage.getItem('graph')
+        window.location.href = graph_route;
         // document.getElementById('tableButton').innerHTML = "Hello World";
     })
 
     document.getElementById('tableButton').addEventListener('click', function() {
-        window.location.href = '/tables';
+        table_route = sessionStorage.getItem('table')
+        window.location.href = table_route;
         // document.getElementById('tableButton').innerHTML = "Hello World";
     })
 
     document.getElementById('priceButton').addEventListener('click', function() {
-        window.location.href = '/closing_prices';
+        closing_route = sessionStorage.getItem('closing')
+        window.location.href = closing_route;
         // document.getElementById('tableButton').innerHTML = "Hello World";
     })
 
