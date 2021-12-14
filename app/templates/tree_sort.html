@@ -1,5 +1,5 @@
 <link rel="stylesheet" type="text/css" href="../static/stylesheet.css"> {% extends "index.html" %} {% block content %}
-<h2>Tree sort</h2>
+<h2>Tree sort for {{ market }}</h2>
 <form action="{{ url_for('tree_sort')}}" method="post">
     <label for="date">Start date:</label>
     <input type="text" id="date1" name="date1" placeholder="Insert start date">

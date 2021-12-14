@@ -1,0 +1,41 @@
+<link rel="stylesheet" type="text/css" href="../static/stylesheet.css"> {% extends "index.html" %} {% block content %}
+<h2>Percentage change for all markets</h2>
+<form action="{{ url_for('prediction_table')}}" method="post">
+
+    <div class="table">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Market</th>
+                    <th>5 days change</th>
+                    <th>10 days change</th>
+                    <th>20 days change</th>
+                    <th>30 days change</th>
+                    <th>90 days change</th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for elements in markets %}
+
+                <tr>
+                    <td>{{ elements }}</td>
+                    <td>{{ markets[elements][0] }} % </td>
+                    <td>{{ markets[elements][1] }} % </td>
+                    <td>{{ markets[elements][2] }} % </td>
+                    <td>{{ markets[elements][3] }} % </td>
+                    <td>{{ markets[elements][4] }} % </td>
+
+
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+
+
+    {% endblock %}

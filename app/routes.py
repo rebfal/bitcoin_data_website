@@ -1,4 +1,4 @@
-from flask import request, render_template, Response
+from flask import request, render_template, Response, flash
 import io
 import pandas as pd
 import numpy as np
@@ -11,6 +11,9 @@ from app.models import Bitcoin, EUR_USD, Gold, Nasdaq, SP_Futures, SP_VIX_Future
 
 global market_dict
 global choosenmarket
+
+global globalMarket 
+global globalChoosen
 
 market_dict = {'bitcoin': Bitcoin,
                'eur_usd': EUR_USD,
@@ -38,8 +41,25 @@ def home():
             choosenmarket = market_dict['S&P 500 VIX Futures']
         if request.form['choose_market'] == 'Tesla':
             choosenmarket = market_dict['tesla']
+            
+        market = request.form['choose_market']
+        choosen = True
+    
+    if request.method  == 'GET':
+        market = 'Bitcoin'
+        choosenmarket = Bitcoin
+        choosen = False
+    setVariables(market, choosen)
+    
+    return render_template('index.html', market = market, choosen = choosen)
 
-    return render_template('index.html')
+def setVariables(market, choosen):
+    global globalMarket
+    global globalChoosen
+
+    globalMarket = market
+    globalChoosen = choosen
+
 
 @app.route('/tables', methods = ['GET','POST'])
 def show_tables():
@@ -55,7 +75,7 @@ def show_tables():
             bitcoins = choosenmarket.query.order_by(choosenmarket.date).all()
             #bitcoins = bitcoins[0:10]
 
-        return(render_template('tables.html', bitcoins = bitcoins))
+        return(render_template('tables.html', bitcoins = bitcoins, market = globalMarket))
         
     except Exception as e:
         error_text = '<p> The error: <br>' + str(e) + '</p>'
@@ -65,6 +85,7 @@ def show_tables():
     
 @app.route('/closing_prices', methods = ['GET','POST'])
 def show_closing_prices():
+    
     try:
         if request.method == "POST":
            
@@ -87,7 +108,7 @@ def show_closing_prices():
             bitcoins = choosenmarket.query.order_by(choosenmarket.date).all()
         
         
-        return(render_template('closing_prices.html', bitcoins = bitcoins))
+        return(render_template('closing_prices.html', bitcoins = bitcoins, market = globalMarket))
           
     except Exception as e:
         error_text = '<p> The error: <br>' + str(e) + '</p>'
@@ -136,7 +157,7 @@ def tree_sort():
         else:
             bitcoins = Bitcoin.query.order_by(Bitcoin.date).all()
         
-        return(render_template('tree_sort.html', bitcoins = bitcoins))
+        return(render_template('tree_sort.html', bitcoins = bitcoins, market = globalMarket))
 
     except Exception as e:
         error_text = '<p> The error: <br>' + str(e) + '</p>'
@@ -190,7 +211,7 @@ class BSTree:
 
 @app.route('/graph')
 def showGraph():
-    return(render_template('graph.html'))
+    return(render_template('graph.html', market = globalMarket))
 
 
 @app.route('/plot.png')
@@ -222,3 +243,31 @@ def create_figure():
     print(price_y[10:30])
     axis.plot(xpoints, price_y)
     return fig
+
+
+@app.route('/predictions', methods = ['GET','POST'])
+def prediction_table():
+    names = {'bitcoin': 'Bitcoin',
+               'eur_usd': 'EUR/USD',
+               'gold': 'Gold', 
+               'nasdaq': 'Nasdaq',
+               'sp_500_futures': 'S&P Futures', 
+               'sp_vix_futures': 'S&P VIX Futures',
+               'tesla': 'Tesla' }
+    market_dictionary = {} 
+    for key in market_dict:
+        selected_market = market_dict[key]
+        first_value = float([bitcoin.price for bitcoin in selected_market.query.order_by(selected_market.date.desc()).filter(selected_market.date).limit(1).all()][0].replace(',','.'))
+        days = [5, 10, 20, 30, 90]
+        prices_days = []
+        
+        for day in days:
+            last_value = float([bitcoin.price for bitcoin in selected_market.query.order_by(selected_market.date.desc()).filter(selected_market.date).limit(day).all()][-1].replace(',','.'))
+            change_this_day = (first_value/(last_value) - 1)*100
+            prices_days.append(round(change_this_day,4))
+
+        market_dictionary[names[key]] = prices_days   
+        print(market_dictionary) 
+        
+    return render_template('predictions.html', markets = market_dictionary, market = globalMarket)
+   
