@@ -1,5 +1,5 @@
 <link rel="stylesheet" type="text/css" href="../static/stylesheet.css"> {% extends "index.html" %} {% block content %}
-<h2>Prices</h2>
+<h2>Closing prices for {{ market }}</h2>
 <form action="{{ url_for('show_closing_prices')}}" method="post">
     <label for="date">Start date:</label>
     <input type="text" id="date1" name="date1" placeholder="YYYY-MM-DD">

@@ -44,7 +44,7 @@ header img {
     grid-column: 1;
     display: grid;
     grid-template-columns: auto;
-    grid-template-rows: 4rem 4rem 4rem 4rem;
+    grid-template-rows: 4rem 4rem 4rem 4rem 4rem;
 }
 
 button,
@@ -97,6 +97,10 @@ button:hover {
 
 #graphButton {
     grid-row: 4;
+}
+
+#predictionButton {
+    grid-row: 5;
 }
 
 #temp {
