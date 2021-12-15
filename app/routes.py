@@ -350,13 +350,16 @@ def prediction_table():
     test_filter = df_tot.loc[df_tot['Date'] >= pd.to_datetime('2020-01-01')]
    
 
-    print(train_filter.shape())
-    print(test_filter.shape())
+    print(train_filter)
+    print(test_filter)
 
-    
+    train_filter.to_csv('Train file.csv')
+    test_filter.to_csv('Test file.csv')
+    df_split.to_csv('Features file.csv')
+
     #XGBOOST
     
-    x,y = df_split.iloc[:,:-1],df_split.iloc[:,:-1]
+    #x,y = df_split.iloc[:,:-1],df_split.iloc[:,:-1]
     #data_dmatrix = xgb.DMatrix(data=x, label=y)
 
 
