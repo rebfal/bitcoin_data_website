@@ -6,6 +6,10 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 
+# import xgboost as xgb
+# from sklearn.metrics import mean_squared_error
+
+
 from app import app
 from app.models import Bitcoin, EUR_USD, Gold, Nasdaq, SP_Futures, SP_VIX_Futures, TSLA
 
