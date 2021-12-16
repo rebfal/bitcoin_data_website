@@ -5,9 +5,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-# import xgboost as xgb
-# from sklearn.metrics import mean_squared_error
-# from sklearn.model_selection import train_test_split
+import xgboost as xgb
+from xgboost import XGBClassifier
+from sklearn.metrics import mean_squared_error, accuracy_score
+from sklearn.model_selection import train_test_split
+
 
 from app import app
 from app.models import Bitcoin, EUR_USD, Gold, Nasdaq, SP_Futures, SP_VIX_Futures, TSLA
@@ -281,7 +283,7 @@ def prediction_table():
 
     
     dates = [bitcoin.date for bitcoin in Bitcoin.query.order_by(Bitcoin.date).all()] 
-    bitcoin_prices = [bitcoin.price for bitcoin in Bitcoin.query.order_by(Bitcoin.date).all()]
+    bitcoin_prices = [float(bitcoin.price.replace(',', '.')) for bitcoin in Bitcoin.query.order_by(Bitcoin.date).all()]
     data = {
         'Dates': dates,
         'Bitcoin prices': bitcoin_prices,   
@@ -289,7 +291,7 @@ def prediction_table():
     df_tot = pd.DataFrame(data)   
 
     eur_usd_dates = [bitcoin.date for bitcoin in EUR_USD.query.order_by(EUR_USD.date).all()]
-    eur_usd_prices = [bitcoin.price for bitcoin in EUR_USD.query.order_by(EUR_USD.date).all()]
+    eur_usd_prices = [float(bitcoin.price.replace(',', '.'))for bitcoin in EUR_USD.query.order_by(EUR_USD.date).all()]
     data_eur = {
         'Dates': eur_usd_dates,
         'EUR USD prices': eur_usd_prices
@@ -297,7 +299,7 @@ def prediction_table():
     df_eur = pd.DataFrame(data_eur)
     
     gold_dates = [bitcoin.date for bitcoin in Gold.query.order_by(Gold.date).all()]
-    gold_prices = [bitcoin.price for bitcoin in Gold.query.order_by(Gold.date).all()]
+    gold_prices = [float(bitcoin.price.replace(',', '.'))for bitcoin in Gold.query.order_by(Gold.date).all()]
     data_gold = {
         'Dates': gold_dates,
         'EUR USD prices': gold_prices
@@ -305,14 +307,14 @@ def prediction_table():
     df_gold = pd.DataFrame(data_gold)
 
     nasdaq_dates = [bitcoin.date for bitcoin in Nasdaq.query.order_by(Nasdaq.date).all()]
-    nasdaq_prices = [bitcoin.price for bitcoin in Nasdaq.query.order_by(Nasdaq.date).all()]
+    nasdaq_prices = [float(bitcoin.price.replace(',', '.'))for bitcoin in Nasdaq.query.order_by(Nasdaq.date).all()]
     data_nasdaq ={
         'Dates': nasdaq_dates,
         'EUR USD prices': nasdaq_prices
     }
     df_nasdaq = pd.DataFrame(data_nasdaq)
 
-    sp_500_prices = [bitcoin.price for bitcoin in SP_Futures.query.order_by(SP_Futures.date).all()]
+    sp_500_prices = [float(bitcoin.price.replace(',', '.')) for bitcoin in SP_Futures.query.order_by(SP_Futures.date).all()]
     sp_500_dates = [bitcoin.date for bitcoin in SP_Futures.query.order_by(SP_Futures.date).all()]
     data_sp_500 ={
         'Dates': sp_500_dates,
@@ -320,7 +322,7 @@ def prediction_table():
     }
     df_sp_500 = pd.DataFrame(data_sp_500)
 
-    sp_vix_prices = [bitcoin.price for bitcoin in SP_VIX_Futures.query.order_by(SP_VIX_Futures.date).all()]
+    sp_vix_prices = [float(bitcoin.price.replace(',', '.')) for bitcoin in SP_VIX_Futures.query.order_by(SP_VIX_Futures.date).all()]
     sp_vix_dates = [bitcoin.date for bitcoin in SP_VIX_Futures.query.order_by(SP_VIX_Futures.date).all()]
     data_sp_vix ={
         'Dates': sp_vix_dates,
@@ -328,7 +330,7 @@ def prediction_table():
     }
     df_sp_vix = pd.DataFrame(data_sp_vix)
 
-    tsla_prices = [bitcoin.price for bitcoin in TSLA.query.order_by(TSLA.date).all()]
+    tsla_prices = [float(bitcoin.price.replace(',', '.')) for bitcoin in TSLA.query.order_by(TSLA.date).all()]
     tsla_dates = [bitcoin.date for bitcoin in TSLA.query.order_by(TSLA.date).all()]
 
     data_tsla ={
@@ -358,14 +360,40 @@ def prediction_table():
     df_split.to_csv('Features file.csv')
 
     #XGBOOST
-    
-    #x,y = df_split.iloc[:,:-1],df_split.iloc[:,:-1]
+    print(df_split)
+    x,y = df_split.iloc[:,:-1],df_split.iloc[:,:-1]
     #data_dmatrix = xgb.DMatrix(data=x, label=y)
 
+    #TEST
+    test_x = test_filter.drop(columns=['Bitcoin_prices','Date'],axis=1)
+    test_y = test_filter['Bitcoin_prices']
+
+    #TRAIN
+    train_x = test_filter.drop(columns=['Bitcoin_prices', 'Date'],axis=1)
+    train_y = test_filter['Bitcoin_prices']
 
 
+    # model = XGBClassifier()
+    # model.fit(train_x, train_y)
 
-        
-        
+    # predict_train = model.predict(train_x)
+    # print('\nTarget on train data',predict_train) 
+
+    xg_reg = xgb.XGBRegressor(objective='reg:linear', colsample_by_max_depth = 5, alpha = 10, n_estimators = 10)
+    xg_reg.fit(train_x, train_y)
+    preds_test = xg_reg.predict(test_x)
+    rmse = np.sqrt(mean_squared_error(test_y, preds_test))
+    print(preds_test)
+    print("RSME: %f" % (rmse))
+
+    bitcoin_preds = [None]*2
+    bitcoin_preds[0] = preds_test
+    bitcoin_preds[1] = test_y
+    print(bitcoin_preds)
+    
+   #accuracy_train = accuracy_score(train_y,predict_train)
+    #print('\naccuracy_score on train dataset : ', accuracy_train)
+
+
     return render_template('predictions.html', markets = market_dictionary, market = globalMarket)
    
