@@ -390,7 +390,7 @@ def prediction_table():
     bitcoin_preds[0] = preds_test
     bitcoin_preds[1] = test_y
     print(bitcoin_preds)
-    p
+    
    #accuracy_train = accuracy_score(train_y,predict_train)
     #print('\naccuracy_score on train dataset : ', accuracy_train)
 
